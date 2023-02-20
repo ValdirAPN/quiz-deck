@@ -1,11 +1,12 @@
 package br.com.vpn.quizdeck.mocks
 
 import br.com.vpn.quizdeck.domain.model.Topic
+import java.util.*
 
 fun topics(): List<Topic> {
-    return listOf<Topic>(
-        Topic("1", "História"),
-        Topic("1", "Matemática"),
-        Topic("1", "Inglês"),
+    return listOf(
+        Topic(UUID.randomUUID(), "História"),
+        Topic(UUID.randomUUID(), "Matemática"),
+        Topic(UUID.randomUUID(), "Inglês"),
     )
 }

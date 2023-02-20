@@ -7,7 +7,7 @@ import br.com.vpn.quizdeck.databinding.TopicListItemBinding
 import br.com.vpn.quizdeck.domain.model.Topic
 
 class TopicAdapter(
-    private val dataSet: List<Topic>
+    private val dataSet: MutableList<Topic>
 ) : RecyclerView.Adapter<TopicAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: TopicListItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -26,4 +26,10 @@ class TopicAdapter(
     }
 
     override fun getItemCount() = dataSet.size
+
+    fun addAll(newDataSet: List<Topic>) {
+        dataSet.clear()
+        dataSet.addAll(newDataSet)
+        notifyItemRangeChanged(0, newDataSet.size)
+    }
 }

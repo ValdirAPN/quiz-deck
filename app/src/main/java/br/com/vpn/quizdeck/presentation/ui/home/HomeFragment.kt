@@ -5,14 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.vpn.quizdeck.databinding.FragmentHomeBinding
-import br.com.vpn.quizdeck.mocks.topics
+import br.com.vpn.quizdeck.domain.model.Topic
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: HomeViewModel by viewModels()
 
     private lateinit var topicsAdapter: TopicAdapter
 
@@ -27,12 +36,39 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val topics = topics()
-        topicsAdapter = TopicAdapter(topics)
+        topicsAdapter = TopicAdapter(mutableListOf())
 
         binding.rvTopics.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = topicsAdapter
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    uiState.topics.let {
+                        if (it.isEmpty()) {
+                            binding.llNothingFound.visibility = View.VISIBLE
+                        } else {
+                            binding.llNothingFound.visibility = View.GONE
+                            topicsAdapter.addAll(uiState.topics)
+                        }
+                    }
+                }
+            }
+        }
+
+        binding.fabNewTopic.setOnClickListener {
+            activity?.supportFragmentManager?.let {
+                val topicsFormModalBottomSheet = TopicsFormModalBottomSheet.newInstance(
+                    object : TopicsFormModalBottomSheet.TopicsFormListener {
+                        override fun onConfirm(topic: Topic) {
+                            viewModel.addTopic(topic)
+                        }
+                    }
+                )
+                topicsFormModalBottomSheet.show(it, TopicsFormModalBottomSheet.TAG)
+            }
         }
 
 //        binding.buttonFirst.setOnClickListener {
