@@ -1,22 +1,24 @@
-package br.com.vpn.quizdeck.presentation.ui.home
+package br.com.vpn.quizdeck.presentation.ui.topic
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import br.com.vpn.quizdeck.databinding.DeckListItemBinding
 import br.com.vpn.quizdeck.databinding.TopicListItemBinding
+import br.com.vpn.quizdeck.domain.model.Deck
 import br.com.vpn.quizdeck.domain.model.Topic
 
-class TopicAdapter(
-    private val dataSet: MutableList<Topic>,
-    private val onItemClick: (Topic) -> Unit
-) : RecyclerView.Adapter<TopicAdapter.ViewHolder>() {
+class DeckAdapter(
+    private val dataSet: MutableList<Deck>,
+    private val onItemClick: (Deck) -> Unit
+) : RecyclerView.Adapter<DeckAdapter.ViewHolder>() {
 
     inner class ViewHolder(
-        private val binding: TopicListItemBinding,
+        private val binding: DeckListItemBinding,
         private val onClick: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(topic: Topic) {
-            binding.tvTitle.text = topic.title
+        fun bind(deck: Deck) {
+            binding.tvTitle.text = deck.title
 
             binding.flContainer.setOnClickListener {
                 onClick(adapterPosition)
@@ -26,7 +28,7 @@ class TopicAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            TopicListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            DeckListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding) {
             onItemClick(dataSet[it])
         }
@@ -38,7 +40,7 @@ class TopicAdapter(
 
     override fun getItemCount() = dataSet.size
 
-    fun addAll(newDataSet: List<Topic>) {
+    fun addAll(newDataSet: List<Deck>) {
         dataSet.clear()
         dataSet.addAll(newDataSet)
         notifyItemRangeChanged(0, newDataSet.size)

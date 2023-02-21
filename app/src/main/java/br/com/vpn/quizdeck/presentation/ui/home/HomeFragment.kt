@@ -1,6 +1,7 @@
 package br.com.vpn.quizdeck.presentation.ui.home
 
 import android.os.Bundle
+import android.text.Layout.Directions
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentHomeBinding
 import br.com.vpn.quizdeck.domain.model.Topic
+import br.com.vpn.quizdeck.presentation.ui.topic.TopicFragment
+import br.com.vpn.quizdeck.presentation.ui.topic.TopicFragmentArgs
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,7 +42,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        topicsAdapter = TopicAdapter(mutableListOf())
+        topicsAdapter = TopicAdapter(mutableListOf()) { topic ->
+            val action = HomeFragmentDirections.actionOpenTopic(topic)
+            findNavController().navigate(action)
+        }
 
         binding.rvTopics.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -79,5 +88,9 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val TAG = "HomeFragment"
     }
 }

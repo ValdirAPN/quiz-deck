@@ -45,10 +45,12 @@
     </string>
     <string name="add_subject">Adicionar tópico</string>
     <string name="topics">Tópicos</string>
+    <string name="decks">Baralhos</string>
     <string name="no_items_found_click_to_add">Não encontramos nenhum item cadastrado. Clique no botão abaixo para adicionar!</string>
     <string name="title">Título</string>
     <string name="content_description_image_no_items_found">Imagem de nenhum item encontrado</string>
     <string name="content_description_logo_quiz_deck">Logotipo QuizDeck</string>
     <string name="finish">Concluir</string>
     <string name="choose_title_to_topic">Escolha um título para o tópico</string>
+    <string name="choose_title_to_deck">Escolha um título para o baralho</string>
 </resources>

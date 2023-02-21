@@ -9,4 +9,5 @@ interface TopicsRepository {
     suspend fun saveTopic(topic: Topic)
 
     fun getTopicsStream() : Flow<ResultData<List<Topic>>>
+    fun getById(id: String): Flow<ResultData<Topic>>
 }
