@@ -1,10 +1,9 @@
-package br.com.vpn.quizdeck.data.dao
+package br.com.vpn.quizdeck.data.source.deck
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import br.com.vpn.quizdeck.data.entity.DeckEntity
-import br.com.vpn.quizdeck.data.entity.TopicEntity
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
@@ -15,5 +14,5 @@ interface DecksDao {
     suspend fun insert(deck: DeckEntity)
 
     @Query("SELECT * FROM decks WHERE topicId=:id")
-    fun getByTopicId(id: UUID): Flow<List<DeckEntity>>
+    fun getAllByTopicId(id: UUID): Flow<List<DeckEntity>>
 }

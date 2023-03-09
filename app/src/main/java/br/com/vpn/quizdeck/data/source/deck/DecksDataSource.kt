@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface DecksDataSource {
     suspend fun save(deck: Deck)
-    fun getByTopicId(id: String): Flow<ResultData<List<Deck>>>
+    fun getAllByTopicId(id: String): Flow<ResultData<List<Deck>>>
 }

@@ -1,4 +1,4 @@
-package br.com.vpn.quizdeck.data.dao
+package br.com.vpn.quizdeck.data.source.topic
 
 import androidx.room.Dao
 import androidx.room.Insert

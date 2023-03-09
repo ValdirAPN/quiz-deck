@@ -6,4 +6,7 @@
     <color name="primary">#6833EB</color>
     <color name="primary_container">#E8DEFF</color>
     <color name="surface">#FFFBFF</color>
+
+    <color name="error_container">#FFDAD6</color>
+    <color name="error">#BA1A1A</color>
 </resources>

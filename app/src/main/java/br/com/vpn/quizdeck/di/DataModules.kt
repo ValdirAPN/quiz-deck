@@ -2,9 +2,13 @@ package br.com.vpn.quizdeck.di
 
 import android.content.Context
 import androidx.room.Room
+import br.com.vpn.quizdeck.data.repository.CardsRepository
 import br.com.vpn.quizdeck.data.repository.DecksRepository
 import br.com.vpn.quizdeck.data.repository.TopicsRepository
 import br.com.vpn.quizdeck.data.source.QuizDeckDatabase
+import br.com.vpn.quizdeck.data.source.card.CardsDataSource
+import br.com.vpn.quizdeck.data.source.card.CardsLocalDataSource
+import br.com.vpn.quizdeck.data.source.card.CardsRepositoryImpl
 import br.com.vpn.quizdeck.data.source.deck.DecksDataSource
 import br.com.vpn.quizdeck.data.source.deck.DecksLocalDataSource
 import br.com.vpn.quizdeck.data.source.deck.DecksRepositoryImpl
@@ -37,6 +41,14 @@ object RepositoryModules {
     ): DecksRepository {
         return DecksRepositoryImpl(localDataSource)
     }
+
+    @Singleton
+    @Provides
+    fun provideCardsRepository(
+        localDataSource: CardsDataSource
+    ): CardsRepository {
+        return CardsRepositoryImpl(localDataSource)
+    }
 }
 
 @Module
@@ -53,6 +65,12 @@ object DataSourceModules {
     @Provides
     fun provideDecksLocalDataSource(database: QuizDeckDatabase): DecksDataSource {
         return DecksLocalDataSource(database.decksDao())
+    }
+
+    @Singleton
+    @Provides
+    fun provideCardsLocalDataSource(database: QuizDeckDatabase): CardsDataSource {
+        return CardsLocalDataSource(database.cardsDao())
     }
 }
 

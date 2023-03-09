@@ -1,13 +1,15 @@
 package br.com.vpn.quizdeck.domain.model
 
 import br.com.vpn.quizdeck.data.entity.DeckEntity
+import java.io.Serializable
 import java.util.UUID
 
 class Deck(
     val id: UUID,
     val title: String,
-    val topicId: UUID
-) {
+    val topicId: UUID,
+    var cards: List<Card> = emptyList()
+): Serializable {
     fun toEntity() = DeckEntity(
         id = id,
         title = title,

@@ -13,6 +13,6 @@ class DecksRepositoryImpl(
     }
 
     override fun getAllByTopicId(id: String): Flow<ResultData<List<Deck>>> {
-        return localDataSource.getByTopicId(id)
+        return localDataSource.getAllByTopicId(id)
     }
 }

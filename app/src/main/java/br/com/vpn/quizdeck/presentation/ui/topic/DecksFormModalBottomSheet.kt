@@ -63,7 +63,7 @@ class DecksFormModalBottomSheet : BottomSheetDialogFragment() {
     }
 
     companion object {
-        const val TAG = "TopicsFormModalBottomSheet"
+        const val TAG = "DecksFormModalBottomSheet"
 
         fun newInstance(topicId: String, listener: DecksFormListener) = DecksFormModalBottomSheet().apply {
             arguments = Bundle().apply {

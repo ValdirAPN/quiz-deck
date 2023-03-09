@@ -1,4 +1,4 @@
-package br.com.vpn.quizdeck.presentation.ui.topic
+package br.com.vpn.quizdeck.presentation.ui.deck
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,43 +13,41 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.vpn.quizdeck.R
-import br.com.vpn.quizdeck.databinding.FragmentTopicBinding
+import br.com.vpn.quizdeck.databinding.FragmentDeckBinding
+import br.com.vpn.quizdeck.domain.model.Card
 import br.com.vpn.quizdeck.domain.model.Deck
-import br.com.vpn.quizdeck.domain.model.Topic
 import br.com.vpn.quizdeck.presentation.ui.home.HomeFragmentDirections
-import br.com.vpn.quizdeck.presentation.ui.home.TopicAdapter
 import br.com.vpn.quizdeck.presentation.ui.home.TopicsFormModalBottomSheet
+import br.com.vpn.quizdeck.presentation.ui.topic.DecksFormModalBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class TopicFragment : Fragment() {
+class DeckFragment : Fragment() {
 
-    private var _binding: FragmentTopicBinding? = null
+    private var _binding: FragmentDeckBinding? = null
     private val binding get() = _binding!!
 
-    private val args: TopicFragmentArgs by navArgs()
+    private val args: DeckFragmentArgs by navArgs()
 
-    private val viewModel: TopicViewModel by viewModels()
+    private val viewModel: DeckViewModel by viewModels()
 
-    private lateinit var decksAdapter: DeckAdapter
+    private lateinit var cardsAdapter: CardAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        _binding = FragmentTopicBinding.inflate(inflater, container, false)
+        _binding = FragmentDeckBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val topic = args.topic
+        val deck = args.deck
 
-        binding.toolbar.title = topic.title
+        binding.toolbar.title = deck.title
         binding.toolbar.setNavigationIcon(R.drawable.ic_back)
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -57,11 +55,11 @@ class TopicFragment : Fragment() {
 
         binding.fabNewDeck.setOnClickListener {
             activity?.supportFragmentManager?.let {
-                val decksFormModalBottomSheet = DecksFormModalBottomSheet.newInstance(
-                    topicId = topic.id.toString(),
-                    listener = object : DecksFormModalBottomSheet.DecksFormListener {
-                        override fun onConfirm(deck: Deck) {
-                            viewModel.addDeck(deck)
+                val decksFormModalBottomSheet = CardsFormModalBottomSheet.newInstance(
+                    deckId = deck.id.toString(),
+                    listener = object : CardsFormModalBottomSheet.CardsFormListener {
+                        override fun onConfirm(card: Card) {
+                            viewModel.addCard(card)
                         }
                     }
                 )
@@ -69,27 +67,32 @@ class TopicFragment : Fragment() {
             }
         }
 
-        decksAdapter = DeckAdapter(mutableListOf()) { deck ->
-            val action = TopicFragmentDirections.openDeckFragment(deck)
+        binding.btnStartMatch.setOnClickListener {
+            val action = DeckFragmentDirections.openMatchFragment(deck)
             findNavController().navigate(action)
         }
 
-        binding.rvDecks.apply {
+        cardsAdapter = CardAdapter(mutableListOf())
+
+        binding.rvCards.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = decksAdapter
+            adapter = cardsAdapter
         }
 
-        viewModel.loadDecks(topicId = topic.id.toString())
+        viewModel.loadCards(deckId = deck.id.toString())
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
-                    uiState.decks.let { decks ->
-                        if (decks.isEmpty()) {
+                    uiState.cards.let { cards ->
+                        if (cards.isEmpty()) {
                             binding.llNothingFound.visibility = View.VISIBLE
+                            binding.btnStartMatch.isEnabled = false
                         } else {
                             binding.llNothingFound.visibility = View.GONE
-                            decksAdapter.addAll(decks)
+                            binding.btnStartMatch.isEnabled = true
+                            cardsAdapter.addAll(cards)
+                            deck.cards = cards
                         }
                     }
                 }

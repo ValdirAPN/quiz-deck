@@ -25,5 +25,28 @@
         <argument
             android:name="topic"
             app:argType="br.com.vpn.quizdeck.domain.model.Topic" />
+        <action
+            android:id="@+id/openDeckFragment"
+            app:destination="@id/DeckFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/DeckFragment"
+        android:name="br.com.vpn.quizdeck.presentation.ui.deck.DeckFragment"
+        android:label="DeckFragment" >
+        <argument
+            android:name="deck"
+            app:argType="br.com.vpn.quizdeck.domain.model.Deck" />
+        <action
+            android:id="@+id/openMatchFragment"
+            app:destination="@id/matchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/matchFragment"
+        android:name="br.com.vpn.quizdeck.presentation.ui.match.MatchFragment"
+        android:label="fragment_match"
+        tools:layout="@layout/fragment_match" >
+        <argument
+            android:name="deck"
+            app:argType="br.com.vpn.quizdeck.domain.model.Deck" />
     </fragment>
 </navigation>

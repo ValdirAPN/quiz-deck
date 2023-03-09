@@ -20,8 +20,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:src="@drawable/logotipo"
-            android:contentDescription="@string/content_description_logo_quiz_deck" />
+            android:contentDescription="@string/content_description_logo_quiz_deck"
+            android:src="@drawable/logotipo" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <TextView
@@ -51,11 +51,11 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/llNothingFound"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="@id/tvTitle"
@@ -84,7 +84,9 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:contentDescription="@string/add_subject"
+        android:elevation="0dp"
         android:src="@android:drawable/ic_input_add"
+        app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
