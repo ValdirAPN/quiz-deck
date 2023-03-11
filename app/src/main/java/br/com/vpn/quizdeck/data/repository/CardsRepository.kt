@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface CardsRepository {
     suspend fun save(card: Card)
     fun getAllByDeckId(id: String): Flow<ResultData<List<Card>>>
+    suspend fun update(card: Card)
+    suspend fun delete(id: String)
 }

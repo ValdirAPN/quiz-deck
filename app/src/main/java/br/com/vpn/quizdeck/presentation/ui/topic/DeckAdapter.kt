@@ -9,8 +9,9 @@ import br.com.vpn.quizdeck.domain.model.Deck
 import br.com.vpn.quizdeck.domain.model.Topic
 
 class DeckAdapter(
-    private val dataSet: MutableList<Deck>,
-    private val onItemClick: (Deck) -> Unit
+    val dataSet: MutableList<Deck>,
+    private val onItemClick: (Deck) -> Unit,
+    private val onOptionsMenuClick: (Int) -> Unit
 ) : RecyclerView.Adapter<DeckAdapter.ViewHolder>() {
 
     inner class ViewHolder(
@@ -22,6 +23,10 @@ class DeckAdapter(
 
             binding.flContainer.setOnClickListener {
                 onClick(adapterPosition)
+            }
+
+            binding.btnOptions.setOnClickListener {
+                onOptionsMenuClick(adapterPosition)
             }
         }
     }
@@ -43,6 +48,11 @@ class DeckAdapter(
     fun addAll(newDataSet: List<Deck>) {
         dataSet.clear()
         dataSet.addAll(newDataSet)
-        notifyItemRangeChanged(0, newDataSet.size)
+        notifyDataSetChanged()
+    }
+
+    fun clear() {
+        dataSet.clear()
+        notifyDataSetChanged()
     }
 }

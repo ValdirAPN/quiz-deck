@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -56,23 +58,17 @@ class TopicFragment : Fragment() {
         }
 
         binding.fabNewDeck.setOnClickListener {
-            activity?.supportFragmentManager?.let {
-                val decksFormModalBottomSheet = DecksFormModalBottomSheet.newInstance(
-                    topicId = topic.id.toString(),
-                    listener = object : DecksFormModalBottomSheet.DecksFormListener {
-                        override fun onConfirm(deck: Deck) {
-                            viewModel.addDeck(deck)
-                        }
-                    }
-                )
-                decksFormModalBottomSheet.show(it, TopicsFormModalBottomSheet.TAG)
-            }
+            showDecksFormModalBottomSheet(topic = topic)
         }
 
-        decksAdapter = DeckAdapter(mutableListOf()) { deck ->
-            val action = TopicFragmentDirections.openDeckFragment(deck)
-            findNavController().navigate(action)
-        }
+        decksAdapter = DeckAdapter(
+            mutableListOf(),
+            { deck ->
+                val action = TopicFragmentDirections.openDeckFragment(deck)
+                findNavController().navigate(action)
+            },
+            { position -> onOptionsMenuClick(position) }
+        )
 
         binding.rvDecks.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -87,6 +83,7 @@ class TopicFragment : Fragment() {
                     uiState.decks.let { decks ->
                         if (decks.isEmpty()) {
                             binding.llNothingFound.visibility = View.VISIBLE
+                            decksAdapter.clear()
                         } else {
                             binding.llNothingFound.visibility = View.GONE
                             decksAdapter.addAll(decks)
@@ -96,6 +93,46 @@ class TopicFragment : Fragment() {
             }
         }
     }
+
+    private fun showDecksFormModalBottomSheet(topic: Topic? = null, deck: Deck? = null) {
+        activity?.supportFragmentManager?.let {
+            val decksFormModalBottomSheet = DecksFormModalBottomSheet.newInstance(
+                deck = deck,
+                topicId = topic?.id.toString(),
+                listener = object : DecksFormModalBottomSheet.DecksFormListener {
+                    override fun onConfirm(deckData: Deck) {
+                        if (deck == null) {
+                            viewModel.addDeck(deckData)
+                        } else {
+                            viewModel.updateDeck(deckData)
+                        }
+                    }
+                }
+            )
+            decksFormModalBottomSheet.show(it, TopicsFormModalBottomSheet.TAG)
+        }
+    }
+
+    private fun onOptionsMenuClick(position: Int) {
+        val popupMenu = PopupMenu(requireContext(), binding.rvDecks[position].findViewById(R.id.btnOptions))
+        popupMenu.inflate(R.menu.item_option)
+        popupMenu.setOnMenuItemClickListener {
+            val deck = decksAdapter.dataSet[position]
+            when(it.itemId) {
+                R.id.edit -> {
+                    showDecksFormModalBottomSheet(deck = deck)
+                    true
+                }
+                R.id.delete -> {
+                    viewModel.deleteDeck(deck)
+                    true
+                }
+                else -> { true }
+            }
+        }
+        popupMenu.show()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -7,8 +7,9 @@ import br.com.vpn.quizdeck.databinding.TopicListItemBinding
 import br.com.vpn.quizdeck.domain.model.Topic
 
 class TopicAdapter(
-    private val dataSet: MutableList<Topic>,
-    private val onItemClick: (Topic) -> Unit
+    val dataSet: MutableList<Topic>,
+    private val onItemClick: (Topic) -> Unit,
+    private val onOptionsMenuClick: (Int) -> Unit
 ) : RecyclerView.Adapter<TopicAdapter.ViewHolder>() {
 
     inner class ViewHolder(
@@ -20,6 +21,10 @@ class TopicAdapter(
 
             binding.flContainer.setOnClickListener {
                 onClick(adapterPosition)
+            }
+
+            binding.btnOptions.setOnClickListener {
+                onOptionsMenuClick(adapterPosition)
             }
         }
     }
@@ -41,6 +46,11 @@ class TopicAdapter(
     fun addAll(newDataSet: List<Topic>) {
         dataSet.clear()
         dataSet.addAll(newDataSet)
-        notifyItemRangeChanged(0, newDataSet.size)
+        notifyDataSetChanged()
+    }
+
+    fun clear() {
+        dataSet.clear()
+        notifyDataSetChanged()
     }
 }

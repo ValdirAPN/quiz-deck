@@ -17,6 +17,7 @@ class CardsFormModalBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private lateinit var listener: CardsFormListener
+    private var card: Card? = null
     private lateinit var deckId: String
 
     override fun onCreateView(
@@ -33,9 +34,16 @@ class CardsFormModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.let {
+            card = if (it.containsKey("card")) it.getSerializable("card") as Card else null
             deckId = it.getSerializable("deckId") as String
             listener = it.getSerializable("listener") as CardsFormListener
         }
+
+        card?.let { it ->
+            binding.tiStatement.editText?.setText(it.statement)
+            binding.tiAnswer.editText?.setText(it.answer)
+        }
+
         binding.btnCreate.setOnClickListener {
             val tiTitle = binding.tiStatement.editText
             val statement = tiTitle?.text.toString()
@@ -53,14 +61,21 @@ class CardsFormModalBottomSheet : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-            listener.onConfirm(
+            card = if (card == null) {
                 Card(
                     id = UUID.randomUUID(),
                     statement = statement,
                     answer = answer,
                     deckId = UUID.fromString(deckId)
                 )
-            )
+            } else {
+                card!!.copy(
+                    statement = statement,
+                    answer = answer
+                )
+            }
+
+            listener.onConfirm(card!!)
             dismiss()
         }
     }
@@ -72,10 +87,11 @@ class CardsFormModalBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "CardsFormModalBottomSheet"
 
-        fun newInstance(deckId: String, listener: CardsFormListener) = CardsFormModalBottomSheet().apply {
+        fun newInstance(card: Card? = null, deckId: String, listener: CardsFormListener) = CardsFormModalBottomSheet().apply {
             arguments = Bundle().apply {
-                putSerializable("deckId", deckId)
                 putSerializable("listener", listener)
+                putSerializable("deckId", deckId)
+                if (card != null) putSerializable("card", card)
             }
         }
     }

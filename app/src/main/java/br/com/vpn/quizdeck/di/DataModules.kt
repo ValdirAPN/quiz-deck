@@ -20,6 +20,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -57,19 +58,28 @@ object DataSourceModules {
 
     @Singleton
     @Provides
-    fun provideTopicsLocalDataSource(database: QuizDeckDatabase): TopicsDataSource {
-        return TopicsLocalDataSource(database.topicsDao())
+    fun provideTopicsLocalDataSource(
+        database: QuizDeckDatabase,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): TopicsDataSource {
+        return TopicsLocalDataSource(database.topicsDao(), ioDispatcher)
     }
 
     @Singleton
     @Provides
-    fun provideDecksLocalDataSource(database: QuizDeckDatabase): DecksDataSource {
+    fun provideDecksLocalDataSource(
+        database: QuizDeckDatabase,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): DecksDataSource {
         return DecksLocalDataSource(database.decksDao())
     }
 
     @Singleton
     @Provides
-    fun provideCardsLocalDataSource(database: QuizDeckDatabase): CardsDataSource {
+    fun provideCardsLocalDataSource(
+        database: QuizDeckDatabase,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): CardsDataSource {
         return CardsLocalDataSource(database.cardsDao())
     }
 }

@@ -1,10 +1,11 @@
 package br.com.vpn.quizdeck.presentation.ui.home
 
 import android.os.Bundle
-import android.text.Layout.Directions
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -15,9 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentHomeBinding
 import br.com.vpn.quizdeck.domain.model.Topic
-import br.com.vpn.quizdeck.presentation.ui.topic.TopicFragment
-import br.com.vpn.quizdeck.presentation.ui.topic.TopicFragmentArgs
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -31,6 +29,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var topicsAdapter: TopicAdapter
 
+    private var topicsFormModalBottomSheet: TopicsFormModalBottomSheet? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,10 +42,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        topicsAdapter = TopicAdapter(mutableListOf()) { topic ->
-            val action = HomeFragmentDirections.actionOpenTopic(topic)
-            findNavController().navigate(action)
-        }
+        registerForContextMenu(binding.rvTopics)
+
+        topicsAdapter = TopicAdapter(
+            mutableListOf(),
+            { topic -> onTopicClick(topic) },
+            { position -> onOptionsMenuClick(position) }
+        )
 
         binding.rvTopics.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -58,6 +61,7 @@ class HomeFragment : Fragment() {
                     uiState.topics.let {
                         if (it.isEmpty()) {
                             binding.llNothingFound.visibility = View.VISIBLE
+                            topicsAdapter.clear()
                         } else {
                             binding.llNothingFound.visibility = View.GONE
                             topicsAdapter.addAll(uiState.topics)
@@ -68,21 +72,52 @@ class HomeFragment : Fragment() {
         }
 
         binding.fabNewTopic.setOnClickListener {
-            activity?.supportFragmentManager?.let {
-                val topicsFormModalBottomSheet = TopicsFormModalBottomSheet.newInstance(
-                    object : TopicsFormModalBottomSheet.TopicsFormListener {
-                        override fun onConfirm(topic: Topic) {
-                            viewModel.addTopic(topic)
-                        }
-                    }
-                )
-                topicsFormModalBottomSheet.show(it, TopicsFormModalBottomSheet.TAG)
+            showTopicsFormModalBottomSheet()
+        }
+    }
+
+    private fun onOptionsMenuClick(position: Int) {
+        val popupMenu = PopupMenu(requireContext(), binding.rvTopics[position].findViewById(R.id.btnOptions))
+        popupMenu.inflate(R.menu.item_option)
+        popupMenu.setOnMenuItemClickListener {
+            val topic = topicsAdapter.dataSet[position]
+            when(it.itemId) {
+                R.id.edit -> {
+                    showTopicsFormModalBottomSheet(topic)
+                    true
+                }
+                R.id.delete -> {
+                    viewModel.deleteTopic(topic)
+                    true
+                }
+                else -> { true }
             }
         }
+        popupMenu.show()
+    }
 
-//        binding.buttonFirst.setOnClickListener {
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        }
+    private fun showTopicsFormModalBottomSheet(topic: Topic? = null) {
+        activity?.supportFragmentManager?.let {
+            topicsFormModalBottomSheet?.dismiss()
+            topicsFormModalBottomSheet = TopicsFormModalBottomSheet.newInstance(
+                topic = topic,
+                listener = object : TopicsFormModalBottomSheet.TopicsFormListener {
+                    override fun onConfirm(topicData: Topic) {
+                        if (topic == null) {
+                            viewModel.addTopic(topicData)
+                        } else {
+                            viewModel.updateTopic(topicData)
+                        }
+                    }
+                }
+            )
+            topicsFormModalBottomSheet?.show(it, TopicsFormModalBottomSheet.TAG)
+        }
+    }
+
+    private fun onTopicClick(topic: Topic) {
+        val action = HomeFragmentDirections.actionOpenTopic(topic)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

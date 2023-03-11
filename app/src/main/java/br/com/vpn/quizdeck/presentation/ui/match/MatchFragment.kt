@@ -31,7 +31,7 @@ class MatchFragment : Fragment() {
 
     private val viewModel: MatchViewModel by viewModels()
 
-    private lateinit var cardsAdapter: CardAdapter
+    private lateinit var matchResultAdapter: MatchResultAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,11 +51,11 @@ class MatchFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        cardsAdapter = CardAdapter(mutableListOf())
+        matchResultAdapter = MatchResultAdapter(mutableListOf())
 
         binding.rvCards.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = cardsAdapter
+            adapter = matchResultAdapter
         }
 
         initListeners()
@@ -75,7 +75,7 @@ class MatchFragment : Fragment() {
                     if (uiState.hasFinished) {
                         binding.matchContainer.visibility = View.GONE
                         binding.resultContainer.visibility = View.VISIBLE
-                        cardsAdapter.addAll(uiState.cards)
+                        matchResultAdapter.addAll(uiState.cards)
                     } else {
                         binding.matchContainer.visibility = View.VISIBLE
                         binding.resultContainer.visibility = View.GONE

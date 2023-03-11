@@ -4,7 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.vpn.quizdeck.data.ResultData
 import br.com.vpn.quizdeck.domain.model.Card
+import br.com.vpn.quizdeck.domain.model.Deck
+import br.com.vpn.quizdeck.domain.model.Topic
 import br.com.vpn.quizdeck.presentation.ui.deck.usecases.CreateCardUseCase
+import br.com.vpn.quizdeck.presentation.ui.deck.usecases.DeleteCardUseCase
+import br.com.vpn.quizdeck.presentation.ui.deck.usecases.EditCardUseCase
 import br.com.vpn.quizdeck.presentation.ui.deck.usecases.LoadCardsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -20,7 +24,9 @@ data class DeckUiState(
 @HiltViewModel
 class DeckViewModel @Inject constructor(
     private val loadCardsUseCase: LoadCardsUseCase,
-    private val createCardUseCase: CreateCardUseCase
+    private val createCardUseCase: CreateCardUseCase,
+    private val deleteCardUseCase: DeleteCardUseCase,
+    private val editCardUseCase: EditCardUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DeckUiState())
@@ -47,6 +53,17 @@ class DeckViewModel @Inject constructor(
                     else -> {}
                 }
             }
+        }
+    }
+
+    fun updateCard(card: Card) {
+        viewModelScope.launch {
+            editCardUseCase.invoke(card = card)
+        }
+    }
+    fun deleteCard(card: Card) {
+        viewModelScope.launch {
+            deleteCardUseCase.invoke(card.id.toString())
         }
     }
 }

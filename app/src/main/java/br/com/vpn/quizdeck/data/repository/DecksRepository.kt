@@ -5,7 +5,8 @@ import br.com.vpn.quizdeck.domain.model.Deck
 import kotlinx.coroutines.flow.Flow
 
 interface DecksRepository {
-
     suspend fun save(deck: Deck)
     fun getAllByTopicId(id: String): Flow<ResultData<List<Deck>>>
+    suspend fun update(deck: Deck)
+    suspend fun delete(id: String)
 }

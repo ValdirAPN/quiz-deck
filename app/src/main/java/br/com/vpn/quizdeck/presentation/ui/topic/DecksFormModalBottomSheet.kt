@@ -18,6 +18,7 @@ class DecksFormModalBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private lateinit var listener: DecksFormListener
+    private var deck: Deck? = null
     private lateinit var topicId: String
 
     override fun onCreateView(
@@ -34,9 +35,15 @@ class DecksFormModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.let {
+            deck = if (it.containsKey("deck")) it.getSerializable("deck") as Deck else null
             topicId = it.getSerializable("topicId") as String
             listener = it.getSerializable("listener") as DecksFormListener
         }
+
+        deck?.let {
+            binding.tiTitle.editText?.setText(it.title)
+        }
+
         binding.btnCreate.setOnClickListener {
             binding.tiTitle.editText?.let {
                 val title = it.text.toString()
@@ -46,13 +53,17 @@ class DecksFormModalBottomSheet : BottomSheetDialogFragment() {
                     return@setOnClickListener
                 }
 
-                listener.onConfirm(
+                deck = if (deck == null) {
                     Deck(
                         id = UUID.randomUUID(),
                         title = title,
                         topicId = UUID.fromString(topicId)
                     )
-                )
+                } else {
+                    deck!!.copy(title = title)
+                }
+
+                listener.onConfirm(deck!!)
                 dismiss()
             }
         }
@@ -65,10 +76,11 @@ class DecksFormModalBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "DecksFormModalBottomSheet"
 
-        fun newInstance(topicId: String, listener: DecksFormListener) = DecksFormModalBottomSheet().apply {
+        fun newInstance(deck: Deck? = null, topicId: String, listener: DecksFormListener) = DecksFormModalBottomSheet().apply {
             arguments = Bundle().apply {
                 putSerializable("topicId", topicId)
                 putSerializable("listener", listener)
+                if (deck != null) putSerializable("deck", deck)
             }
         }
     }

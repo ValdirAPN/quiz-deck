@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import br.com.vpn.quizdeck.data.ResultData
 import br.com.vpn.quizdeck.domain.model.Deck
 import br.com.vpn.quizdeck.presentation.ui.topic.usecases.CreateDecksUseCase
+import br.com.vpn.quizdeck.presentation.ui.topic.usecases.DeleteDeckUseCase
+import br.com.vpn.quizdeck.presentation.ui.topic.usecases.EditDeckUseCase
 import br.com.vpn.quizdeck.presentation.ui.topic.usecases.LoadDecksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +24,9 @@ data class TopicUiState(
 @HiltViewModel
 class TopicViewModel @Inject constructor(
     private val createDecksUseCase: CreateDecksUseCase,
-    private val loadDecksUseCase: LoadDecksUseCase
+    private val loadDecksUseCase: LoadDecksUseCase,
+    private val deleteDeckUseCase: DeleteDeckUseCase,
+    private val editDeckUseCase: EditDeckUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TopicUiState())
@@ -49,6 +53,18 @@ class TopicViewModel @Inject constructor(
                     else -> {}
                 }
             }
+        }
+    }
+
+    fun updateDeck(deck: Deck) {
+        viewModelScope.launch {
+            editDeckUseCase.invoke(deck = deck)
+        }
+    }
+
+    fun deleteDeck(deck: Deck) {
+        viewModelScope.launch {
+            deleteDeckUseCase.invoke(deck.id.toString())
         }
     }
 }

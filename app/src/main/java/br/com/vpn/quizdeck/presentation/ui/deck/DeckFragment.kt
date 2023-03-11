@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,11 +18,8 @@ import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentDeckBinding
 import br.com.vpn.quizdeck.domain.model.Card
 import br.com.vpn.quizdeck.domain.model.Deck
-import br.com.vpn.quizdeck.presentation.ui.home.HomeFragmentDirections
 import br.com.vpn.quizdeck.presentation.ui.home.TopicsFormModalBottomSheet
-import br.com.vpn.quizdeck.presentation.ui.topic.DecksFormModalBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -54,17 +53,7 @@ class DeckFragment : Fragment() {
         }
 
         binding.fabNewDeck.setOnClickListener {
-            activity?.supportFragmentManager?.let {
-                val decksFormModalBottomSheet = CardsFormModalBottomSheet.newInstance(
-                    deckId = deck.id.toString(),
-                    listener = object : CardsFormModalBottomSheet.CardsFormListener {
-                        override fun onConfirm(card: Card) {
-                            viewModel.addCard(card)
-                        }
-                    }
-                )
-                decksFormModalBottomSheet.show(it, TopicsFormModalBottomSheet.TAG)
-            }
+            showCardsFormModalBottomSheet(deck = deck)
         }
 
         binding.btnStartMatch.setOnClickListener {
@@ -72,7 +61,9 @@ class DeckFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        cardsAdapter = CardAdapter(mutableListOf())
+        cardsAdapter = CardAdapter(
+            mutableListOf()
+        ) { position -> onOptionsMenuClick(position) }
 
         binding.rvCards.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -88,6 +79,7 @@ class DeckFragment : Fragment() {
                         if (cards.isEmpty()) {
                             binding.llNothingFound.visibility = View.VISIBLE
                             binding.btnStartMatch.isEnabled = false
+                            cardsAdapter.clear()
                         } else {
                             binding.llNothingFound.visibility = View.GONE
                             binding.btnStartMatch.isEnabled = true
@@ -98,6 +90,45 @@ class DeckFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showCardsFormModalBottomSheet(deck: Deck? = null, card: Card? = null) {
+        activity?.supportFragmentManager?.let {
+            val cardsFormModalBottomSheet = CardsFormModalBottomSheet.newInstance(
+                card = card,
+                deckId = deck?.id.toString(),
+                listener = object : CardsFormModalBottomSheet.CardsFormListener {
+                    override fun onConfirm(cardData: Card) {
+                        if (card == null) {
+                            viewModel.addCard(cardData)
+                        } else {
+                            viewModel.updateCard(cardData)
+                        }
+                    }
+                }
+            )
+            cardsFormModalBottomSheet.show(it, TopicsFormModalBottomSheet.TAG)
+        }
+    }
+
+    private fun onOptionsMenuClick(position: Int) {
+        val popupMenu = PopupMenu(requireContext(), binding.rvCards[position].findViewById(R.id.btnOptions))
+        popupMenu.inflate(R.menu.item_option)
+        popupMenu.setOnMenuItemClickListener {
+            val card = cardsAdapter.dataSet[position]
+            when(it.itemId) {
+                R.id.edit -> {
+                    showCardsFormModalBottomSheet(card = card)
+                    true
+                }
+                R.id.delete -> {
+                    viewModel.deleteCard(card)
+                    true
+                }
+                else -> { true }
+            }
+        }
+        popupMenu.show()
     }
 
     override fun onDestroyView() {

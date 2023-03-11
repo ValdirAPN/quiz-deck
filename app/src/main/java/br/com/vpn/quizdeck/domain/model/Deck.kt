@@ -4,7 +4,7 @@ import br.com.vpn.quizdeck.data.entity.DeckEntity
 import java.io.Serializable
 import java.util.UUID
 
-class Deck(
+data class Deck(
     val id: UUID,
     val title: String,
     val topicId: UUID,

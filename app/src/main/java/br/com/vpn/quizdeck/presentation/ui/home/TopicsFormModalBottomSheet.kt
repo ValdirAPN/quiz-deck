@@ -17,6 +17,7 @@ class TopicsFormModalBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private lateinit var listener: TopicsFormListener
+    private var topic: Topic? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,8 +33,14 @@ class TopicsFormModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.let {
+            topic = if (it.containsKey("topic")) it.getSerializable("topic") as Topic else null
             listener = it.getSerializable("listener") as TopicsFormListener
         }
+
+        topic?.let {
+            binding.tiTitle.editText?.setText(it.title)
+        }
+
         binding.btnCreate.setOnClickListener {
             binding.tiTitle.editText?.let {
                 val title = it.text.toString()
@@ -43,15 +50,23 @@ class TopicsFormModalBottomSheet : BottomSheetDialogFragment() {
                     return@setOnClickListener
                 }
 
-                listener.onConfirm(
+                topic = if (topic == null) {
                     Topic(
                         id = UUID.randomUUID(),
                         title = title
                     )
-                )
+                } else {
+                    topic!!.copy(title = title)
+                }
+
+                listener.onConfirm(topic!!)
                 dismiss()
             }
         }
+    }
+
+    fun setDefaults(title: String) {
+        binding.tiTitle.editText?.setText(title)
     }
 
     interface TopicsFormListener : Serializable {
@@ -61,9 +76,10 @@ class TopicsFormModalBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "TopicsFormModalBottomSheet"
 
-        fun newInstance(listener: TopicsFormListener) = TopicsFormModalBottomSheet().apply {
+        fun newInstance(topic: Topic? = null, listener: TopicsFormListener) = TopicsFormModalBottomSheet().apply {
             arguments = Bundle().apply {
                 putSerializable("listener", listener)
+                if (topic != null) putSerializable("topic", topic)
             }
         }
     }

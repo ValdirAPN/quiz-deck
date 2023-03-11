@@ -4,7 +4,7 @@ import br.com.vpn.quizdeck.data.entity.CardEntity
 import java.io.Serializable
 import java.util.*
 
-class Card(
+data class Card(
     val id: UUID,
     val statement: String,
     val answer: String,
