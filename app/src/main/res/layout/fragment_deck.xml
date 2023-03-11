@@ -84,7 +84,7 @@
         android:layout_height="64dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="20dp"
-        android:text="Iniciar"
+        android:text="@string/start"
         app:layout_constraintBottom_toBottomOf="@+id/fabNewDeck"
         app:layout_constraintEnd_toStartOf="@+id/fabNewDeck"
         app:layout_constraintStart_toStartOf="parent"

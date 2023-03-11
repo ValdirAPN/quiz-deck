@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/HomeFragment"
         android:name="br.com.vpn.quizdeck.presentation.ui.home.HomeFragment"
-        android:label="@string/first_fragment_label"
+        android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
 
         <action
@@ -20,7 +20,7 @@
     <fragment
         android:id="@+id/TopicFragment"
         android:name="br.com.vpn.quizdeck.presentation.ui.topic.TopicFragment"
-        android:label="@string/second_fragment_label"
+        android:label="TopicFragment"
         tools:layout="@layout/fragment_topic">
         <argument
             android:name="topic"
@@ -43,7 +43,7 @@
     <fragment
         android:id="@+id/matchFragment"
         android:name="br.com.vpn.quizdeck.presentation.ui.match.MatchFragment"
-        android:label="fragment_match"
+        android:label="MatchFragment"
         tools:layout="@layout/fragment_match" >
         <argument
             android:name="deck"

@@ -41,7 +41,7 @@
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resposta"
+            android:text="@string/answer"
             android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +54,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Digite a resposta" />
+                android:hint="@string/type_the_answer" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
