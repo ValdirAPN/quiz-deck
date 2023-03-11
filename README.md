@@ -2,7 +2,7 @@
 
 An Android flip card app to help and make the learning process fun.
 
-![Logo](https://user-images.githubusercontent.com/116365213/224506390-409e6073-3e43-4e67-8303-4fd0cb877204.png)
+![Logo](https://user-images.githubusercontent.com/116365213/224506390-409e6073-3e43-4e67-8303-4fd0cb877204.png | width=100)
 
 ![Topics](https://user-images.githubusercontent.com/116365213/224506413-6ae4fd11-8f8c-4bad-ab83-c27b10a7406c.png)
 
