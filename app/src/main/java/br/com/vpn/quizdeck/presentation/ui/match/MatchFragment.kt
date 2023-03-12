@@ -16,6 +16,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentMatchBinding
+import br.com.vpn.quizdeck.presentation.ui.common.DividerItemDecoration
 import br.com.vpn.quizdeck.presentation.ui.deck.CardAdapter
 import br.com.vpn.quizdeck.presentation.ui.deck.DeckFragmentArgs
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,12 +52,7 @@ class MatchFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        matchResultAdapter = MatchResultAdapter(mutableListOf())
-
-        binding.rvCards.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = matchResultAdapter
-        }
+        setupRecyclerView()
 
         initListeners()
 
@@ -98,6 +94,20 @@ class MatchFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun setupRecyclerView() {
+        ContextCompat.getDrawable(requireContext(), R.drawable.recyclerview_divider)?.let {
+            val dividerItemDecoration = DividerItemDecoration(it)
+            binding.rvCards.addItemDecoration(dividerItemDecoration)
+        }
+
+        matchResultAdapter = MatchResultAdapter(mutableListOf())
+
+        binding.rvCards.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = matchResultAdapter
         }
     }
 

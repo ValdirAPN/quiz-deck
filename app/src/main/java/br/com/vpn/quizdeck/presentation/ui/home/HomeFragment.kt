@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentHomeBinding
 import br.com.vpn.quizdeck.domain.model.Topic
+import br.com.vpn.quizdeck.presentation.ui.common.DividerItemDecoration
+import br.com.vpn.quizdeck.presentation.ui.common.EndOffsetItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -44,16 +47,7 @@ class HomeFragment : Fragment() {
 
         registerForContextMenu(binding.rvTopics)
 
-        topicsAdapter = TopicAdapter(
-            mutableListOf(),
-            { topic -> onTopicClick(topic) },
-            { position -> onOptionsMenuClick(position) }
-        )
-
-        binding.rvTopics.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = topicsAdapter
-        }
+        setupRecyclerView()
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -73,6 +67,27 @@ class HomeFragment : Fragment() {
 
         binding.fabNewTopic.setOnClickListener {
             showTopicsFormModalBottomSheet()
+        }
+    }
+
+    private fun setupRecyclerView() {
+        ContextCompat.getDrawable(requireContext(), R.drawable.recyclerview_divider)?.let {
+            val dividerItemDecoration = DividerItemDecoration(it)
+            binding.rvTopics.addItemDecoration(dividerItemDecoration)
+        }
+
+        val endOffsetItemDecoration = EndOffsetItemDecoration(EndOffsetItemDecoration.ABOVE_FAB_OFFSET)
+        binding.rvTopics.addItemDecoration(endOffsetItemDecoration)
+
+        topicsAdapter = TopicAdapter(
+            mutableListOf(),
+            { topic -> onTopicClick(topic) },
+            { position -> onOptionsMenuClick(position) }
+        )
+
+        binding.rvTopics.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = topicsAdapter
         }
     }
 

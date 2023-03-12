@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            app:endIconMode="clear_text"
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -38,9 +39,9 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/answer"
             android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
@@ -49,6 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            app:endIconMode="clear_text"
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -63,7 +65,7 @@
     <Button
         android:id="@+id/btnCreate"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_marginTop="16dp"
         android:text="@string/finish" />
 

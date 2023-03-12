@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +19,8 @@ import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentTopicBinding
 import br.com.vpn.quizdeck.domain.model.Deck
 import br.com.vpn.quizdeck.domain.model.Topic
+import br.com.vpn.quizdeck.presentation.ui.common.DividerItemDecoration
+import br.com.vpn.quizdeck.presentation.ui.common.EndOffsetItemDecoration
 import br.com.vpn.quizdeck.presentation.ui.home.HomeFragmentDirections
 import br.com.vpn.quizdeck.presentation.ui.home.TopicAdapter
 import br.com.vpn.quizdeck.presentation.ui.home.TopicsFormModalBottomSheet
@@ -61,19 +64,7 @@ class TopicFragment : Fragment() {
             showDecksFormModalBottomSheet(topic = topic)
         }
 
-        decksAdapter = DeckAdapter(
-            mutableListOf(),
-            { deck ->
-                val action = TopicFragmentDirections.openDeckFragment(deck)
-                findNavController().navigate(action)
-            },
-            { position -> onOptionsMenuClick(position) }
-        )
-
-        binding.rvDecks.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = decksAdapter
-        }
+        setupRecyclerView()
 
         viewModel.loadDecks(topicId = topic.id.toString())
 
@@ -91,6 +82,30 @@ class TopicFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun setupRecyclerView() {
+        ContextCompat.getDrawable(requireContext(), R.drawable.recyclerview_divider)?.let {
+            val dividerItemDecoration = DividerItemDecoration(it)
+            binding.rvDecks.addItemDecoration(dividerItemDecoration)
+        }
+
+        val endOffsetItemDecoration = EndOffsetItemDecoration(EndOffsetItemDecoration.ABOVE_FAB_OFFSET)
+        binding.rvDecks.addItemDecoration(endOffsetItemDecoration)
+
+        decksAdapter = DeckAdapter(
+            mutableListOf(),
+            { deck ->
+                val action = TopicFragmentDirections.openDeckFragment(deck)
+                findNavController().navigate(action)
+            },
+            { position -> onOptionsMenuClick(position) }
+        )
+
+        binding.rvDecks.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = decksAdapter
         }
     }
 

@@ -1,10 +1,12 @@
 package br.com.vpn.quizdeck.presentation.ui.deck
 
 import android.os.Bundle
+import android.text.style.LineHeightSpan.WithDensity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +20,8 @@ import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentDeckBinding
 import br.com.vpn.quizdeck.domain.model.Card
 import br.com.vpn.quizdeck.domain.model.Deck
+import br.com.vpn.quizdeck.presentation.ui.common.DividerItemDecoration
+import br.com.vpn.quizdeck.presentation.ui.common.EndOffsetItemDecoration
 import br.com.vpn.quizdeck.presentation.ui.home.TopicsFormModalBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -61,16 +65,7 @@ class DeckFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        cardsAdapter = CardAdapter(
-            mutableListOf()
-        ) { position -> onOptionsMenuClick(position) }
-
-        binding.rvCards.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = cardsAdapter
-        }
-
-        viewModel.loadCards(deckId = deck.id.toString())
+        setupRecyclerView(deck)
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -90,6 +85,27 @@ class DeckFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setupRecyclerView(deck: Deck) {
+        ContextCompat.getDrawable(requireContext(), R.drawable.recyclerview_divider)?.let {
+            val dividerItemDecoration = DividerItemDecoration(it)
+            binding.rvCards.addItemDecoration(dividerItemDecoration)
+        }
+
+        val endOffsetItemDecoration = EndOffsetItemDecoration(EndOffsetItemDecoration.ABOVE_FAB_OFFSET)
+        binding.rvCards.addItemDecoration(endOffsetItemDecoration)
+
+        cardsAdapter = CardAdapter(
+            mutableListOf()
+        ) { position -> onOptionsMenuClick(position) }
+
+        binding.rvCards.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = cardsAdapter
+        }
+
+        viewModel.loadCards(deckId = deck.id.toString())
     }
 
     private fun showCardsFormModalBottomSheet(deck: Deck? = null, card: Card? = null) {
