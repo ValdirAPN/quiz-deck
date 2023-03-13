@@ -76,7 +76,8 @@ class HomeFragment : Fragment() {
             binding.rvTopics.addItemDecoration(dividerItemDecoration)
         }
 
-        val endOffsetItemDecoration = EndOffsetItemDecoration(EndOffsetItemDecoration.ABOVE_FAB_OFFSET)
+        val endOffsetItemDecoration =
+            EndOffsetItemDecoration(EndOffsetItemDecoration.ABOVE_FAB_OFFSET)
         binding.rvTopics.addItemDecoration(endOffsetItemDecoration)
 
         topicsAdapter = TopicAdapter(
@@ -92,11 +93,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun onOptionsMenuClick(position: Int) {
-        val popupMenu = PopupMenu(requireContext(), binding.rvTopics[position].findViewById(R.id.btnOptions))
+        val popupMenu =
+            PopupMenu(requireContext(), binding.rvTopics[position].findViewById(R.id.btnOptions))
         popupMenu.inflate(R.menu.item_option)
         popupMenu.setOnMenuItemClickListener {
             val topic = topicsAdapter.dataSet[position]
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.edit -> {
                     showTopicsFormModalBottomSheet(topic)
                     true
@@ -105,7 +107,9 @@ class HomeFragment : Fragment() {
                     viewModel.deleteTopic(topic)
                     true
                 }
-                else -> { true }
+                else -> {
+                    true
+                }
             }
         }
         popupMenu.show()

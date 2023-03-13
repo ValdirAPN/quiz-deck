@@ -56,4 +56,5 @@
     <string name="start">Start</string>
     <string name="finished_match_subtitle">Check your answers below</string>
     <string name="finished_match_title">Congratulations! You\'ve finished one more deck.</string>
+    <string name="match_progress_indicator">%1$d of %2$d</string>
 </resources>

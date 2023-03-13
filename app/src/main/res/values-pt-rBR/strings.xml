@@ -19,4 +19,5 @@
     <string name="start">Iniciar</string>
     <string name="finished_match_subtitle">Confira abaixo suas respostas</string>
     <string name="finished_match_title">Parabéns! Você finalizou mais um baralho.</string>
+    <string name="match_progress_indicator">%1$d de %2$d</string>
 </resources>

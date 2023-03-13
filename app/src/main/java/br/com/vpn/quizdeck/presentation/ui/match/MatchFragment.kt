@@ -14,11 +14,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.vpn.quizdeck.MainActivity
 import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentMatchBinding
 import br.com.vpn.quizdeck.presentation.ui.common.DividerItemDecoration
 import br.com.vpn.quizdeck.presentation.ui.deck.CardAdapter
 import br.com.vpn.quizdeck.presentation.ui.deck.DeckFragmentArgs
+import br.com.vpn.quizdeck.presentation.ui.home.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -69,6 +71,9 @@ class MatchFragment : Fragment() {
                     }
 
                     if (uiState.hasFinished) {
+                        MainActivity.mInterstitialAd?.show(requireActivity()) ?: run {
+                            Log.d(TAG, "The interstitial ad wasn't ready yet.")
+                        }
                         binding.matchContainer.visibility = View.GONE
                         binding.resultContainer.visibility = View.VISIBLE
                         matchResultAdapter.addAll(uiState.cards)
@@ -90,7 +95,11 @@ class MatchFragment : Fragment() {
                         val progress = ((teste / uiState.cards.size) * 100).toInt()
                         Log.d("TAG", "onViewCreated: $progress")
                         binding.piProgress.progress = progress
-                        binding.tvCurrent.text = "${index + 1} de ${uiState.cards.size}"
+                        binding.tvCurrent.text =
+                            resources.getString(
+                                R.string.match_progress_indicator,
+                                index + 1,
+                                uiState.cards.size)
                     }
                 }
             }
@@ -127,6 +136,10 @@ class MatchFragment : Fragment() {
         binding.btnFinish.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    companion object {
+        private const val TAG = "MatchFragment"
     }
 
 }
