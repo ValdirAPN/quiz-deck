@@ -14,13 +14,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import br.com.vpn.quizdeck.MainActivity
+import br.com.vpn.quizdeck.BuildConfig.INTERSTITIAL_AD_UNIT_ID_END_MATCH
 import br.com.vpn.quizdeck.R
 import br.com.vpn.quizdeck.databinding.FragmentMatchBinding
 import br.com.vpn.quizdeck.presentation.ui.common.DividerItemDecoration
-import br.com.vpn.quizdeck.presentation.ui.deck.CardAdapter
 import br.com.vpn.quizdeck.presentation.ui.deck.DeckFragmentArgs
-import br.com.vpn.quizdeck.presentation.ui.home.HomeFragment
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -35,6 +37,11 @@ class MatchFragment : Fragment() {
     private val viewModel: MatchViewModel by viewModels()
 
     private lateinit var matchResultAdapter: MatchResultAdapter
+
+    private val adRequest: AdRequest by lazy {
+        AdRequest.Builder().build()
+    }
+    private var mInterstitialAd: InterstitialAd? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +69,7 @@ class MatchFragment : Fragment() {
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                loadAd()
                 viewModel.uiState.collect { uiState ->
                     uiState.cards.let { cards ->
                         if (cards.isNotEmpty()) {
@@ -71,9 +79,7 @@ class MatchFragment : Fragment() {
                     }
 
                     if (uiState.hasFinished) {
-                        MainActivity.mInterstitialAd?.show(requireActivity()) ?: run {
-                            Log.d(TAG, "The interstitial ad wasn't ready yet.")
-                        }
+                        showAd()
                         binding.matchContainer.visibility = View.GONE
                         binding.resultContainer.visibility = View.VISIBLE
                         matchResultAdapter.addAll(uiState.cards)
@@ -104,6 +110,29 @@ class MatchFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showAd() {
+        mInterstitialAd?.show(requireActivity())
+    }
+
+    private fun loadAd() {
+        InterstitialAd.load(
+            requireContext(),
+            INTERSTITIAL_AD_UNIT_ID_END_MATCH,
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    Log.d(TAG, error.toString())
+                    mInterstitialAd = null
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d(TAG, "Ad was loaded.")
+                    mInterstitialAd = interstitialAd
+                }
+            }
+        )
     }
 
     private fun setupRecyclerView() {

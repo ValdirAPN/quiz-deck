@@ -20,8 +20,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMainBinding
-    private val INTERSTITIAL_AD_UNIT_ID by lazy {
-        BuildConfig.INTERSTITIAL_AD_UNIT_ID
+    private val INTERSTITIAL_AD_UNIT_ID_END_MATCH by lazy {
+        BuildConfig.INTERSTITIAL_AD_UNIT_ID_END_MATCH
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         MobileAds.initialize(this) {}
 
-        setupAds()
+//        setupAds()
     }
 
     private fun setupAds() {
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         InterstitialAd.load(
             this,
-            INTERSTITIAL_AD_UNIT_ID,
+            INTERSTITIAL_AD_UNIT_ID_END_MATCH,
             adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
@@ -54,33 +54,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         )
-
-        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
-            override fun onAdClicked() {
-                Log.d(TAG, "Ad was clicked.")
-            }
-
-            override fun onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                Log.d(TAG, "Ad dismissed fullscreen content.")
-                mInterstitialAd = null
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                // Called when ad fails to show.
-                Log.e(TAG, "Ad failed to show fullscreen content.")
-                mInterstitialAd = null
-            }
-
-            override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Log.d(TAG, "Ad recorded an impression.")
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Log.d(TAG, "Ad showed fullscreen content.")
-            }
-        }
     }
 }

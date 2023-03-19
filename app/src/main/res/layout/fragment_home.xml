@@ -12,14 +12,14 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:paddingHorizontal="20dp"
-        android:paddingVertical="24dp"
+        android:paddingVertical="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="32dp"
             android:contentDescription="@string/content_description_logo_quiz_deck"
             android:src="@drawable/logotipo" />
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -59,18 +59,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="@id/tvTitle"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+        app:layout_constraintTop_toBottomOf="@+id/llHeader">
 
         <ImageView
             android:layout_width="200dp"
             android:layout_height="140dp"
             android:contentDescription="@string/content_description_image_no_items_found"
-            android:src="@drawable/no_data" />
+            android:src="@drawable/empty" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:maxWidth="300dp"
             android:text="@string/no_items_found_click_to_add"
             android:textAlignment="center"

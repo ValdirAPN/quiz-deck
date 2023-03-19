@@ -14,15 +14,15 @@ android {
         applicationId "br.com.vpn.quizdeck"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
-        buildConfigField "String", "INTERSTITIAL_AD_UNIT_ID", "\"${properties.getProperty("INTERSTITIAL_AD_UNIT_ID")}\""
+        buildConfigField "String", "INTERSTITIAL_AD_UNIT_ID_END_MATCH", "\"${properties.getProperty("INTERSTITIAL_AD_UNIT_ID_END_MATCH")}\""
     }
 
     buildTypes {
