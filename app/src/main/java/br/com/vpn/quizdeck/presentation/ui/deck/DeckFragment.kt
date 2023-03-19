@@ -23,6 +23,7 @@ import br.com.vpn.quizdeck.domain.model.Deck
 import br.com.vpn.quizdeck.presentation.ui.common.DividerItemDecoration
 import br.com.vpn.quizdeck.presentation.ui.common.EndOffsetItemDecoration
 import br.com.vpn.quizdeck.presentation.ui.home.TopicsFormModalBottomSheet
+import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -67,6 +68,8 @@ class DeckFragment : Fragment() {
 
         setupRecyclerView(deck)
 
+        loadAd()
+
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
@@ -106,6 +109,11 @@ class DeckFragment : Fragment() {
         }
 
         viewModel.loadCards(deckId = deck.id.toString())
+    }
+
+    private fun loadAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
     }
 
     private fun showCardsFormModalBottomSheet(deck: Deck? = null, card: Card? = null) {

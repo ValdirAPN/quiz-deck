@@ -24,6 +24,7 @@ import br.com.vpn.quizdeck.presentation.ui.common.EndOffsetItemDecoration
 import br.com.vpn.quizdeck.presentation.ui.home.HomeFragmentDirections
 import br.com.vpn.quizdeck.presentation.ui.home.TopicAdapter
 import br.com.vpn.quizdeck.presentation.ui.home.TopicsFormModalBottomSheet
+import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -66,6 +67,8 @@ class TopicFragment : Fragment() {
 
         setupRecyclerView()
 
+        loadAd()
+
         viewModel.loadDecks(topicId = topic.id.toString())
 
         lifecycleScope.launch {
@@ -107,6 +110,11 @@ class TopicFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = decksAdapter
         }
+    }
+
+    private fun loadAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
     }
 
     private fun showDecksFormModalBottomSheet(topic: Topic? = null, deck: Deck? = null) {
